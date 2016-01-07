@@ -20,22 +20,27 @@ AssetManager.prototype.downloadAll = function (callback) {
         var path = this.downloadQueue[i];
         var img = new Image();
         img.success = false;
-        var self = this;
-        img.addEventListener("load", function () {
+
+        var loadFunction = function (img, self) {
             console.log("loaded: " + this.src.toString());
             img.success = true;
             self.successCount++;
             if (self.isDone()) {
                 callback();
             }
-        });
-        img.addEventListener("error", function () {
+        };
+
+        var errorFunction = function (self) {
             console.log("error: " + this.src.toString());
             self.errorCount++;
             if (self.isDone()) {
                 callback();
             }
-        });
+        };
+
+        img.addEventListener("load", loadFunction(img, this));
+        img.addEventListener("error", errorFunction(this));
+
         img.src = path;
         this.cache[path] = img;
     }
