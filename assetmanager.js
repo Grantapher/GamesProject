@@ -19,17 +19,20 @@ AssetManager.prototype.downloadAll = function (callback) {
     for (var i = 0; i < this.downloadQueue.length; i++) {
         var path = this.downloadQueue[i];
         var img = new Image();
-        var that = this;
+        img.success = false;
+        var self = this;
         img.addEventListener("load", function () {
-            console.log("dun: " + this.src.toString());
-            that.successCount += 1;
-            if (that.isDone()) {
+            console.log("loaded: " + this.src.toString());
+            img.success = true;
+            self.successCount++;
+            if (self.isDone()) {
                 callback();
             }
         });
         img.addEventListener("error", function () {
-            that.errorCount += 1;
-            if (that.isDone()) {
+            console.log("error: " + this.src.toString());
+            self.errorCount++;
+            if (self.isDone()) {
                 callback();
             }
         });
@@ -39,6 +42,5 @@ AssetManager.prototype.downloadAll = function (callback) {
 };
 
 AssetManager.prototype.getAsset = function (path) {
-    //console.log(path.toString());
     return this.cache[path];
 };
